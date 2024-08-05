@@ -9,13 +9,11 @@ on:
         type: string
     secrets:
       runpod_token:
-        description: "RunPod token for authentication"
         required: true
-        type: string
       runpod_endpoint:
-        description: "RunPod endpoint URL"
         required: true
-        type: string
+      GITHUB_TOKEN:
+        required: true
 
 jobs:
   fetch-and-generate-rmig:
