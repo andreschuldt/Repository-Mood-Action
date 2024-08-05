@@ -12,7 +12,7 @@ on:
         required: true
       runpod_endpoint:
         required: true
-      github_token:
+      github_accesstoken:
         required: true
 
 jobs:
