@@ -1,17 +1,12 @@
 {
   "name": "repository-mood-action",
   "version": "1.0.0",
-  "description": "Repository Mood Image Generator automated with GitHub Actions",
+  "description": "This Project contains the GitHub Actions workflow to generate a repository mood image into the repository, which represents the current state of the project.",
   "main": "index.js",
-  "author": "",
-  "license": "ISC",
-  "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "start:api": "node pages/api/getImage.js",
-    "lint": "next lint",
     "test": "echo \"Error: no test specified\" && exit 1"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
