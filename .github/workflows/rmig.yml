@@ -16,9 +16,6 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        run: npm ci
-
       - name: Fetch lines of code
         id: loc
         run: |
@@ -83,11 +80,6 @@ jobs:
             },
             "numberOfContributors": '"${{ env.numberOfContributors }}"'
           }' > mood/metadata.json
-
-      - name: Debug environment secrets
-        run: |
-          echo "RUNPOD_TOKEN: $RUNPOD_TOKEN"
-          echo "RUNPOD_ENDPOINT: $RUNPOD_ENDPOINT"
 
       - name: Debug metadata JSON
         run: |
