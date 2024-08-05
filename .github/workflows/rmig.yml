@@ -104,9 +104,6 @@ jobs:
         run: chmod +x mood/rmig-cli-linux
 
       - name: Generate mood image
-        env:
-          RUNPOD_TOKEN: ${{ secrets.RUNPOD_TOKEN }}
-          RUNPOD_ENDPOINT: ${{ secrets.RUNPOD_ENDPOINT }}
         run: |
           ./mood/rmig-cli-linux --input mood/metadata.json --output mood/mood.png --token "${{ inputs.runpod_token }}" --endpoint "${{ inputs.runpod_endpoint }}"
 
