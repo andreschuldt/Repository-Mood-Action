@@ -12,7 +12,7 @@ on:
         required: true
       runpod_endpoint:
         required: true
-      GITHUB_TOKEN:
+      github_token:
         required: true
 
 jobs:
@@ -156,7 +156,7 @@ jobs:
 
       - name: Commit and push mood.png to the repository
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.github_token }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
