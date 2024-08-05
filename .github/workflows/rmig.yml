@@ -156,7 +156,7 @@ jobs:
 
       - name: Commit and push mood.png to the repository
         env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+          GITHUB_TOKEN: ${{ secrets.github_accesstoken }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
