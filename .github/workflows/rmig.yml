@@ -7,6 +7,7 @@ on:
         description: "The branch or tag ref to checkout"
         required: true
         type: string
+    secrets:
       runpod_token:
         description: "RunPod token for authentication"
         required: true
@@ -105,7 +106,7 @@ jobs:
 
       - name: Generate mood image
         run: |
-          ./mood/rmig-cli-linux --input mood/metadata.json --output mood/mood.png --token "${{ inputs.runpod_token }}" --endpoint "${{ inputs.runpod_endpoint }}"
+          ./mood/rmig-cli-linux --input mood/metadata.json --output mood/mood.png --token "${{ secrets.runpod_token }}" --endpoint "${{ secrets.runpod_endpoint }}"
 
       - name: Debug mood image
         run: |
