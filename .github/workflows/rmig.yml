@@ -1,0 +1,162 @@
+name: Run Repository Mood Image Generator
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fetch-and-generate-rmig:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch lines of code
+        id: loc
+        run: |
+          LINES_OF_CODE=$(git ls-files | xargs wc -l | grep total | awk '{print $1}')
+          echo "linesOfCode=\"$LINES_OF_CODE\"" >> $GITHUB_ENV
+
+      - name: Fetch vulnerabilities
+        id: vulnerabilities
+        run: |
+          npm audit --json > audit-report.json
+
+          TOTAL_DEPENDENCIES=$(jq '.metadata.totalDependencies // 0' audit-report.json)
+          CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' audit-report.json)
+          HIGH=$(jq '.metadata.vulnerabilities.high // 0' audit-report.json)
+          MODERATE=$(jq '.metadata.vulnerabilities.moderate // 0' audit-report.json)
+          LOW=$(jq '.metadata.vulnerabilities.low // 0' audit-report.json)
+          INFO=$(jq '.metadata.vulnerabilities.info // 0' audit-report.json)
+
+          TOTAL_VULNERABILITIES=$(($CRITICAL + $HIGH + $MODERATE + $LOW + $INFO))
+
+          echo "total=$TOTAL_VULNERABILITIES" >> $GITHUB_ENV
+          echo "totalDependencies=$TOTAL_DEPENDENCIES" >> $GITHUB_ENV
+          echo "critical=$CRITICAL" >> $GITHUB_ENV
+          echo "high=$HIGH" >> $GITHUB_ENV
+          echo "moderate=$MODERATE" >> $GITHUB_ENV
+          echo "low=$LOW" >> $GITHUB_ENV
+          echo "info=$INFO" >> $GITHUB_ENV
+
+      - name: Fetch number of contributors
+        id: contributors
+        run: |
+          CONTRIBUTORS=$(git shortlog -sn | wc -l)
+          echo "numberOfContributors=\"$CONTRIBUTORS\"" >> $GITHUB_ENV
+
+      - name: Debug environment variables
+        run: |
+          echo "Total Vulnerabilities: ${{ env.total }}"
+          echo "Lines of Code: ${{ env.linesOfCode }}"
+          echo "Total Dependencies: ${{ env.totalDependencies }}"
+          echo "Critical Vulnerabilities: ${{ env.critical }}"
+          echo "High Vulnerabilities: ${{ env.high }}"
+          echo "Moderate Vulnerabilities: ${{ env.moderate }}"
+          echo "Low Vulnerabilities: ${{ env.low }}"
+          echo "Info Vulnerabilities: ${{ env.info }}"
+          echo "Number of Contributors: ${{ env.numberOfContributors }}"
+
+      - name: Create metadata JSON
+        run: |
+          mkdir -p mood
+          echo '{
+            "linesOfCode": '"${{ env.linesOfCode }}"',
+            "vulnerabilities": {
+              "total": '"${{ env.total }}"',
+              "totalDependencies": '"${{ env.totalDependencies }}"',
+              "stats": {
+                "critical": '"${{ env.critical }}"',
+                "high": '"${{ env.high }}"',
+                "moderate": '"${{ env.moderate }}"',
+                "low": '"${{ env.low }}"',
+                "info": '"${{ env.info }}"'
+              }
+            },
+            "numberOfContributors": '"${{ env.numberOfContributors }}"'
+          }' > mood/metadata.json
+
+      - name: Debug environment secrets
+        run: |
+          echo "RUNPOD_TOKEN: $RUNPOD_TOKEN"
+          echo "RUNPOD_ENDPOINT: $RUNPOD_ENDPOINT"
+
+      - name: Debug metadata JSON
+        run: |
+          cat mood/metadata.json
+
+      - name: Make CLI executable
+        run: chmod +x mood/rmig-cli-linux
+
+      - name: Generate mood image
+        env:
+          RUNPOD_TOKEN: ${{ secrets.RUNPOD_TOKEN }}
+          RUNPOD_ENDPOINT: ${{ secrets.RUNPOD_ENDPOINT }}
+        run: |
+          ./mood/rmig-cli-linux --input mood/metadata.json --output mood/mood.png --token $RUNPOD_TOKEN --endpoint $RUNPOD_ENDPOINT
+
+      - name: Debug mood image
+        run: |
+          ls -la mood
+          file mood/mood.png
+
+      - name: Upload image as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mood-image
+          path: mood/mood.png
+
+  download-and-commit-rmig:
+    runs-on: ubuntu-latest
+    needs: fetch-and-generate-rmig
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mood-image
+
+      - name: List extracted files
+        run: |
+          echo "Listing all files after artifact download:"
+          ls -la
+          echo "Listing all files in the current directory:"
+          ls -R
+
+      - name: Move artifact to mood directory
+        run: |
+          mkdir -p mood
+          if [ -f mood.png ]; then
+            mv mood.png mood/mood.png
+            echo "Moved mood.png to mood directory"
+          else
+            echo "mood.png not found in the root directory"
+          fi
+
+      - name: Verify file
+        run: ls -la mood
+
+      - name: Check git status
+        run: |
+          git status
+          git diff mood/mood.png
+
+      - name: Commit and push mood.png to the repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add mood/mood.png
+          git commit -m "Add mood image" || echo "No changes to commit"
+          git push
