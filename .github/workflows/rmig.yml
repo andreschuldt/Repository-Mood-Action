@@ -1,7 +1,20 @@
 name: Run Repository Mood Image Generator
 
 on:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: "The branch or tag ref to checkout"
+        required: true
+        type: string
+      runpod_token:
+        description: "RunPod token for authentication"
+        required: true
+        type: string
+      runpod_endpoint:
+        description: "RunPod endpoint URL"
+        required: true
+        type: string
 
 jobs:
   fetch-and-generate-rmig:
