@@ -1,0 +1,11 @@
+{
+  "name": "repository-mood-action",
+  "version": "1.0.0",
+  "description": "Repository Mood Image Generator automated with GitHub Actions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
