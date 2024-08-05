@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -106,7 +108,7 @@ jobs:
           RUNPOD_TOKEN: ${{ secrets.RUNPOD_TOKEN }}
           RUNPOD_ENDPOINT: ${{ secrets.RUNPOD_ENDPOINT }}
         run: |
-          ./mood/rmig-cli-linux --input mood/metadata.json --output mood/mood.png --token $RUNPOD_TOKEN --endpoint $RUNPOD_ENDPOINT
+          ./mood/rmig-cli-linux --input mood/metadata.json --output mood/mood.png --token "${{ inputs.runpod_token }}" --endpoint "${{ inputs.runpod_endpoint }}"
 
       - name: Debug mood image
         run: |
