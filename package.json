@@ -3,9 +3,15 @@
   "version": "1.0.0",
   "description": "Repository Mood Image Generator automated with GitHub Actions",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "start:api": "node pages/api/getImage.js",
+    "lint": "next lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
