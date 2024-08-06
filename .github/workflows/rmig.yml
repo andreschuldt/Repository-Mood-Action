@@ -34,7 +34,7 @@ jobs:
         id: loc
         run: |
           LINES_OF_CODE=$(git ls-files | xargs wc -l | grep total | awk '{print $1}')
-          echo "linesOfCode=\"$LINES_OF_CODE\"" >> $GITHUB_ENV
+          echo "linesOfCode=$LINES_OF_CODE" >> $GITHUB_ENV
 
       - name: Fetch vulnerabilities
         id: vulnerabilities
@@ -62,10 +62,8 @@ jobs:
       - name: Fetch number of contributors
         id: contributors
         run: |
-          echo "Running git shortlog -sn command..."
           RAW_CONTRIBUTORS=$(git shortlog -sn)
-          echo "Raw Contributors Output:"
-          echo "$RAW_CONTRIBUTORS"
+          echo "Raw Contributors Output: \"$RAW_CONTRIBUTORS\""
           CONTRIBUTORS=$(echo "$RAW_CONTRIBUTORS" | wc -l | xargs)
           echo "Number of Contributors: $CONTRIBUTORS"
           echo "numberOfContributors=$CONTRIBUTORS" >> $GITHUB_ENV
@@ -86,19 +84,19 @@ jobs:
         run: |
           mkdir -p mood
           echo '{
-            "linesOfCode": '"${{ env.linesOfCode }}"',
+            "linesOfCode": '${{ env.linesOfCode }}',
             "vulnerabilities": {
-              "total": '"${{ env.total }}"',
-              "totalDependencies": '"${{ env.totalDependencies }}"',
+              "total": '${{ env.total }}',
+              "totalDependencies": '${{ env.totalDependencies }}',
               "stats": {
-                "critical": '"${{ env.critical }}"',
-                "high": '"${{ env.high }}"',
-                "moderate": '"${{ env.moderate }}"',
-                "low": '"${{ env.low }}"',
-                "info": '"${{ env.info }}"'
+                "critical": '${{ env.critical }}',
+                "high": '${{ env.high }}',
+                "moderate": '${{ env.moderate }}',
+                "low": '${{ env.low }}',
+                "info": '${{ env.info }}'
               }
             },
-            "numberOfContributors": '"${{ env.numberOfContributors }}"'
+            "numberOfContributors": '${{ env.numberOfContributors }}'
           }' > mood/metadata.json
 
       - name: Debug metadata JSON
