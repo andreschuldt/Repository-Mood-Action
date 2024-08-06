@@ -63,6 +63,7 @@ jobs:
         id: contributors
         run: |
           CONTRIBUTORS=$(git shortlog -sn | wc -l | xargs)
+          echo "Number of Contributors: $CONTRIBUTORS"
           echo "numberOfContributors=\"$CONTRIBUTORS\"" >> $GITHUB_ENV
 
       - name: Debug environment variables
