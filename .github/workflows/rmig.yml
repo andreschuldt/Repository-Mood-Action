@@ -62,9 +62,13 @@ jobs:
       - name: Fetch number of contributors
         id: contributors
         run: |
-          CONTRIBUTORS=$(git shortlog -sn | wc -l | xargs)
+          echo "Running git shortlog -sn command..."
+          RAW_CONTRIBUTORS=$(git shortlog -sn)
+          echo "Raw Contributors Output:"
+          echo "$RAW_CONTRIBUTORS"
+          CONTRIBUTORS=$(echo "$RAW_CONTRIBUTORS" | wc -l | xargs)
           echo "Number of Contributors: $CONTRIBUTORS"
-          echo "numberOfContributors=\"$CONTRIBUTORS\"" >> $GITHUB_ENV
+          echo "numberOfContributors=$CONTRIBUTORS" >> $GITHUB_ENV
 
       - name: Debug environment variables
         run: |
