@@ -41,14 +41,15 @@ jobs:
         run: |
           npm audit --json > audit-report.json
 
-          TOTAL_DEPENDENCIES=$(jq '.metadata.totalDependencies // 0' audit-report.json)
+          TOTAL_DEPENDENCIES=$(jq '.metadata.dependencies.prod // 0' audit-report.json)
+
+          TOTAL_VULNERABILITIES=$(jq '.metadata.vulnerabilities.total // 0' audit-report.json)
           CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' audit-report.json)
           HIGH=$(jq '.metadata.vulnerabilities.high // 0' audit-report.json)
           MODERATE=$(jq '.metadata.vulnerabilities.moderate // 0' audit-report.json)
           LOW=$(jq '.metadata.vulnerabilities.low // 0' audit-report.json)
           INFO=$(jq '.metadata.vulnerabilities.info // 0' audit-report.json)
 
-          TOTAL_VULNERABILITIES=$(($CRITICAL + $HIGH + $MODERATE + $LOW + $INFO))
 
           echo "total=$TOTAL_VULNERABILITIES" >> $GITHUB_ENV
           echo "totalDependencies=$TOTAL_DEPENDENCIES" >> $GITHUB_ENV
@@ -61,7 +62,7 @@ jobs:
       - name: Fetch number of contributors
         id: contributors
         run: |
-          CONTRIBUTORS=$(git shortlog -sn | wc -l)
+          CONTRIBUTORS=$(git shortlog -sn | wc -l | xargs)
           echo "numberOfContributors=\"$CONTRIBUTORS\"" >> $GITHUB_ENV
 
       - name: Debug environment variables
