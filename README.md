@@ -10,8 +10,8 @@ This image shows a house which design is dependend on certain project metadata. 
   1. Enabling workflow write permissions: Settings > Actions > General > Workflow permissions > check "read and write permissions".
   2. Creating repository Secrets: Settings > Secrets and Variables > Actions > click "New repository Secret" and enter the values for the secrets ```RUNPOD_ENDPOINT``` and ```RUNPOD_TOKEN``` accordingly.
   3. Create a new directory called ```mood``` inside of the project's root. This is where the image will be located once finished generating.
-  4. Reference image inside if the README.md with ```![Repository Mood](mood/mood.png)``` at the desired location.
-  5. Finally, create a ```.github/workflows/use-rmig.yml``` file with this content:
+  4. Reference the mood image inside of the README.md with ```![Repository Mood](mood/mood.png)``` at the desired location.
+  5. Finally, create a ```.github/workflows/use-rmig.yml``` file that calls this project's action inside your project:
 ```
 Name: Use RMIG Workflow
 
