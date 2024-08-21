@@ -1,7 +1,7 @@
 name: Run Repository Mood Image Generator
 
 permissions:
-  contents: read
+  contents: write
   actions: write
 
 on:
@@ -139,13 +139,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Checkout reusable workflow repository
-        uses: actions/checkout@v4
-        with:
-          repository: andreschuldt/Repository-Mood-Action
-          path: reusable-workflow
-          token: ${{ secrets.github_accesstoken }}
 
       - name: Download artifact
         uses: actions/download-artifact@v4
