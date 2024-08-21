@@ -1,5 +1,9 @@
 name: Run Repository Mood Image Generator
 
+permissions:
+  contents: read
+  actions: write
+
 on:
   workflow_call:
     inputs:
@@ -23,7 +27,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.github_accesstoken }}
           ref: ${{ inputs.ref }}
+
+      - name: Checkout reusable workflow repository
+        uses: actions/checkout@v4
+        with:
+          repository: andreschuldt/Repository-Mood-Action
+          path: reusable-workflow
+          token: ${{ secrets.github_accesstoken }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -104,7 +116,7 @@ jobs:
           cat mood/metadata.json
 
       - name: Make CLI executable
-        run: chmod +x mood/rmig-cli-linux
+        run: chmod +x reusable-workflow/mood/rmig-cli-linux
 
       - name: Generate mood image
         run: |
